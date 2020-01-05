@@ -23,7 +23,7 @@ class Jira
     public function __construct(array $config = [])
     {
         $this->request = new RestRequest();
-        if (!is_null($config))
+        if (!empty($config))
             $this->setConfig($config);
     }
 
@@ -163,12 +163,12 @@ class Jira
         return false;
     }
 
-    public function createIssue($json)
+    public function createIssue($json, $returnResponseBody = true)
     {
         $this->request->openConnect($this->host . 'issue/', 'POST', $json);
         $this->request->execute();
 
-        return $this->request->lastRequestStatus();
+        return $returnResponseBody ? $this->getDecodedApiResponse($this->request->getResponseBody()) : $this->request->lastRequestStatus();
     }
 
     public function addAttachment($filename, $issueKey)
