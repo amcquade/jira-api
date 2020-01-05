@@ -23,16 +23,18 @@ class Jira
     public function __construct(array $config = [])
     {
         $this->request = new RestRequest();
-        if (!empty($config))
+        if (!empty($config)) {
             $this->setConfig($config);
+        }
     }
 
-    public function setConfig(array $config = array())
+    public function setConfig(array $config = [])
     {
         $this->request->username = (isset($config['username'])) ? $config['username'] : null;
         $this->request->password = (isset($config['password'])) ? $config['password'] : null;
         $host = (isset($config['host'])) ? $config['host'] : null;
-        $this->host = 'https://' . $host . '/rest/api/2/';
+        $version = (isset($config['version'])) ? $config['version'] : '2';
+        $this->host = 'https://' . $host . '/rest/api/' . $version . '/';
     }
 
     public function testLogin()
@@ -138,9 +140,9 @@ class Jira
      *
      * @link https://developer.atlassian.com/display/JIRADEV/JIRA+REST+API+Example+-+Query+issues
      *
-     * @param string $query      The JQL query
-     * @param string $fields     A filter of comma separated fields, or null, in case we want all fields
-     * @param int    $maxResults Number of returned results (by default 500)
+     * @param  string $query      The JQL query
+     * @param  string $fields     A filter of comma separated fields, or null, in case we want all fields
+     * @param  int    $maxResults Number of returned results (by default 500)
      * @return mixed False in case of error, array of resultsets otherwise
      */
     public function queryIssue($query, $fields = null, $maxResults = 500)
@@ -197,10 +199,22 @@ class Jira
         return $this->request->lastRequestStatus();
     }
 
+    /**
+     * Return issue creation meta data
+     *
+     * @return mixed|array
+     */
+    public function getIssueMeta() 
+    {
+        $this->request->openConnect($this->host . 'issue/createmeta', 'GET');
+        $this->request->execute();
+        return $this->getDecodedApiResponse($this->request->getResponseBody());
+    }
+
     public function addComment($comment, $issueKey)
     {
         $newComment = array(
-            "body"	=> $comment,
+            "body"    => $comment,
         );
 
         $this->request->openConnect($this->host . 'issue/' . $issueKey . '/comment', 'POST', $newComment);
@@ -264,13 +278,14 @@ class Jira
     }
 
     /**
-     * @param string $responseBody JSON with response body
+     * @param  string $responseBody JSON with response body
      * @return mixed Decoded JSON
      */
     private function getDecodedApiResponse($responseBody)
     {
         /**
          * workaround to json_decode(): integer overflow detected error
+         *
          * @see https://stackoverflow.com/questions/19520487/json-bigint-as-string-removed-in-php-5-5/27909889
          */
         $maxIntLength = strlen((string) PHP_INT_MAX) - 1;
@@ -280,4 +295,3 @@ class Jira
         return $result;
     }
 }
-?>
