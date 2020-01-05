@@ -15,5 +15,5 @@ if ($Jira->testLogin())
 else
     echo "Login Failure\n";
 
-$meta = $Jira->getIssueMeta();
-var_dump($meta);
+$members = $Jira->getMembersFromGroup();
+var_dump($members);

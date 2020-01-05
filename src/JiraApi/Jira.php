@@ -150,10 +150,10 @@ class Jira
         $query = urlencode($query);
         $url   = $this->host . 'search?jql=' . $query;
         if (isset($fields)) {
-            $url.= '&fields=' . $fields;
+            $url .= '&fields=' . $fields;
         }
         if (isset($maxResults)) {
-            $url.= '&maxResults=' . $maxResults;
+            $url .= '&maxResults=' . $maxResults;
         }
         $this->request->OpenConnect($url);
         $this->request->execute();
@@ -204,9 +204,16 @@ class Jira
      *
      * @return mixed|array
      */
-    public function getIssueMeta() 
+    public function getIssueMeta()
     {
         $this->request->openConnect($this->host . 'issue/createmeta', 'GET');
+        $this->request->execute();
+        return $this->getDecodedApiResponse($this->request->getResponseBody());
+    }
+
+    public function getMembersFromGroup($groupName = 'jira-software-users')
+    {
+        $this->request->openConnect($this->host . 'group/member/?groupname=' . $groupName, 'GET');
         $this->request->execute();
         return $this->getDecodedApiResponse($this->request->getResponseBody());
     }
@@ -289,7 +296,7 @@ class Jira
          * @see https://stackoverflow.com/questions/19520487/json-bigint-as-string-removed-in-php-5-5/27909889
          */
         $maxIntLength = strlen((string) PHP_INT_MAX) - 1;
-        $safeJson = preg_replace('/:\s*(-?\d{'.$maxIntLength.',})/', ': "$1"', $responseBody);
+        $safeJson = preg_replace('/:\s*(-?\d{' . $maxIntLength . ',})/', ': "$1"', $responseBody);
         $result = json_decode($safeJson);
 
         return $result;
