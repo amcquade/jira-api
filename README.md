@@ -21,6 +21,7 @@ This project helps you interact with Jira in PHP.
 - [PHP](https://www.php.net/)
 - [Composer](https://getcomposer.org/)
 - [Jira](https://www.atlassian.com/software/jira)
+- [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)
 
 ## Getting Started
 
