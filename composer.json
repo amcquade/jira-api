@@ -8,5 +8,8 @@
         "psr-0": {
             "JiraApi": "src/"
         }
+    },
+    "require": {
+        "squizlabs/php_codesniffer": "*"
     }
 }
