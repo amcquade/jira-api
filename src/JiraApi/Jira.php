@@ -20,10 +20,11 @@ class Jira
      */
     protected $request;
 
-    public function __construct()
+    public function __construct(array $config = [])
     {
         $this->request = new RestRequest();
-
+        if (!is_null($config))
+            $this->setConfig($config);
     }
 
     public function setConfig(array $config = array())
