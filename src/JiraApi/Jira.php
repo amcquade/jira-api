@@ -61,6 +61,19 @@ class Jira
         return $user;
     }
 
+    /**
+     * Return the all projects
+     *
+     * @link https://docs.atlassian.com/software/jira/docs/api/REST/7.6.1/#api/2/project-getAllProjects
+     * @return mixed|array
+     */
+    public function getProjects()
+    {
+        $this->request->openConnect($this->host . 'project', 'GET');
+        $this->request->execute();
+        return $this->getDecodedApiResponse($this->request->getResponseBody());
+    }
+
     public function getStatuses()
     {
         $this->request->openConnect($this->host . 'status', 'GET');
